@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Fraud Detection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            min-height: 100vh;
+            color: white;
+        }
+
+        nav {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 18px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 20px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            color: #38bdf8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .hero {
+            margin-top: 20px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            color: #cbd5e1;
+            font-size: 18px;
+        }
+
+        .card {
+            background: white;
+            color: black;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/signup">Signup</a>
+        <a href="/login">Login</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/history">History</a>
+        <a href="/logout">Logout</a>
+    </nav>
+
+    <div class="container">
+
+        <div class="hero">
+            <h1>💳 Credit Card Fraud Detection</h1>
+            <p>
+                AI-powered fraud detection system using Machine Learning
+            </p>
+        </div>
+
+        <div class="card">
+            <h2>Manual Transaction Check</h2>
+
+            <input id="inputData" placeholder="Enter 30 comma separated values">
+
+            <button onclick="predict()">
+                Predict Transaction
+            </button>
+        </div>
+
+        <div class="card">
+            <h2>CSV Batch Analysis</h2>
+
+            <input type="file" id="fileInput">
+
+            <button onclick="uploadFile()">
+                Upload & Analyze
+            </button>
+        </div>
+
+        <p id="result"></p>
+
+    </div>
+    <script>
+        function predict() {
+            let input = document.getElementById("inputData").value;
+
+            console.log("Raw input:", input);  // debug
+
+            let values = input.split(",").map(v => Number(v.trim()));
+
+            console.log("Parsed:", values);  // debug
+
+            if (values.length !== 30) {
+                document.getElementById("result").innerText =
+                    "Error: Enter exactly 30 values";
+                return;
+            }
+
+            fetch("/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ features: values })
+            })
+                .then(res => {
+                    console.log("Response received"); // debug
+                    return res.json();
+                })
+                .then(data => {
+                    console.log("Data:", data); // debug
+
+                    if (data.error) {
+                        document.getElementById("result").innerText = "Error: " + data.error;
+                    } else {
+                        document.getElementById("result").innerText =
+                            data.prediction === 1 ? "Fraud ❌" : "Not Fraud ✅";
+                    }
+                })
+                .catch(err => {
+                    console.error("Error:", err);
+                    document.getElementById("result").innerText = "Request failed";
+                });
+        }
+
+        function uploadFile() {
+            let file = document.getElementById("fileInput").files[0];
+
+            let formData = new FormData();
+            formData.append("file", file);
+
+            fetch("/upload", {
+                method: "POST",
+                body: formData
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById("result").innerText = data.error;
+                    } else {
+                        document.getElementById("result").innerText =
+                            `Total: ${data.total}, Fraud: ${data.fraud}, Normal: ${data.normal}`;
+                    }
+                });
+        }
+    </script>
+
+</body>
+
+</html>

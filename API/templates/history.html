@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Prediction History</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            min-height: 100vh;
+            color: white;
+        }
+
+        nav {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 18px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 20px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            color: #38bdf8;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #cbd5e1;
+            font-size: 18px;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #2563eb;
+            color: white;
+            padding: 15px;
+            font-size: 16px;
+        }
+
+        td {
+            padding: 15px;
+            color: black;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: center;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .fraud {
+            color: red;
+            font-weight: bold;
+        }
+
+        .safe {
+            color: green;
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #cbd5e1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a href="/">🏠 Home</a>
+        <a href="/dashboard">📊 Dashboard</a>
+        <a href="/history">📜 History</a>
+        <a href="/logout">🚪 Logout</a>
+    </nav>
+
+    <div class="container">
+
+        <div class="header">
+            <h1>📜 Prediction History</h1>
+            <p>View all your fraud detection results</p>
+        </div>
+
+        <div class="table-container">
+
+            <table>
+
+                <tr>
+                    <th>ID</th>
+                    <th>Result</th>
+                    <th>Date & Time</th>
+                </tr>
+
+                {% for row in rows %}
+                <tr>
+
+                    <td>{{ row[0] }}</td>
+
+                    <td>
+                        {% if row[2] == "Fraud" %}
+                        <span class="fraud">🚨 Fraud</span>
+                        {% else %}
+                        <span class="safe">✅ Safe</span>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ row[3] }}</td>
+
+                </tr>
+                {% endfor %}
+
+            </table>
+
+        </div>
+
+        <div class="footer">
+            <h3>💳 Credit Card Fraud Detection System</h3>
+            <p>Machine Learning Prediction Records</p>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
